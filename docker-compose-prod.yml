@@ -1,0 +1,33 @@
+web:
+  image: registry.ng.bluemix.net/gencat/nginx-phpservermon:1.9.2
+  volumes:
+   - phpservermon_static:/var/www/public
+  ports:
+    - "80:80"
+  links:
+    - php
+  command: bash -c "/wait-for-it.sh php:9000 -t 30 && nginx -g 'daemon off;'"
+
+php:
+  image: registry.ng.bluemix.net/gencat/phpservermon
+  volumes:
+   - phpservermon_static:/var/www/public
+  links:
+    - db:mysqlpsm
+  tty: false
+  mem_limit: 128
+  command: bash -c "/wait-for-it.sh mysqlpsm:3306 -t 30 && /root/run.sh"
+  expose:
+    - 9000
+
+db:
+  image: registry.ng.bluemix.net/gencat/mysql:5.7
+  volumes:
+   - phpservermon:/var/lib/mysql
+  environment:
+   - MYSQL_ROOT_PASSWORD=20Suportcld16
+   - MYSQL_DATABASE=phpservermon
+   - MYSQL_USER=phpservermon
+   - MYSQL_PASSWORD=phpservermon
+  expose:
+    - 3306
