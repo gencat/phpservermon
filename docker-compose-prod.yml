@@ -9,14 +9,14 @@ web:
   command: bash -c "/wait-for-it.sh php:9000 -t 30 && nginx -g 'daemon off;'"
 
 php:
-  image: registry.ng.bluemix.net/gencat/phpservermon
+  image: registry.ng.bluemix.net/gencat/phpservermon:1.0.1
   volumes:
    - phpservermon_static:/var/www/public
   links:
     - db:mysqlpsm
   tty: false
-  mem_limit: 128
-  command: bash -c "/wait-for-it.sh mysqlpsm:3306 -t 30 && /root/run.sh"
+  mem_limit: 128m
+  command: bash -c "/wait-for-it.sh mysqlpsm:3306 -t 30 && /entrypoint.sh"
   expose:
     - 9000
 
